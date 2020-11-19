@@ -9,3 +9,4 @@ let period;
 alert("It's alert message!");
 
 console.log('Hello from console');
+console.log('Tu tu ru tu');
