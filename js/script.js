@@ -1,26 +1,20 @@
 'use strict';
 
-// 1.
 const money = 40000,
     income = 'фриланс',
     deposit = true,
     mission = 200000,
-    period = 10;
-let addExpenses = 'Учеба, коммуналка, еда';
+    period = 10,
+    addExpenses = 'Учеба, коммуналка, еда',
+    budgetDay = money / 30;
 
-// 2.
-console.log(typeof money);
-console.log(typeof income);
-console.log(typeof deposit);
+console.log(typeof money, typeof income, typeof deposit);
 
 console.log(addExpenses.length);
 
 console.log('Период равен ' + period + ' месяцев');
 console.log('Цель заработать ' + mission + ' рублей');
 
-addExpenses = addExpenses.toLowerCase();
-addExpenses = addExpenses.split(', ');
-console.log(addExpenses);
+console.log(addExpenses.toLowerCase().split(', '));
 
-const budgetDay = money / 30;
 console.log(budgetDay);
