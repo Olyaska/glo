@@ -4,21 +4,22 @@ const isNumber = function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
-const income = 'фриланс',
-    deposit = confirm('Есть ли у вас депозит в банке?'), 
+const income = 'фриланс', 
     mission = 100000,
     period = 10,
-    addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую:'),
     expenses = [];
 let money;
 
 const start = function() {
-    do { //1.
+    do { 
         money = prompt('Ваш месячный доход?');
     } while (!isNumber(money));
 };
 
 start();
+
+const deposit = confirm('Есть ли у вас депозит в банке?'),
+    addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую:');
 
 const showTypeOf = function(data) {
     console.log(data, typeof data);
@@ -33,7 +34,7 @@ function getExpensesMonth() {
         expenses[i] = prompt('Введите обязательную статью расходов:');
 
         let amount;
-        do { //2.
+        do { 
             amount = prompt('Во сколько это обойдется?');
         } while (!isNumber(amount));
         
@@ -57,7 +58,7 @@ const getTargetMonth = function() {
 
 const budgetDay = Math.floor(accumulatedMonth / 30);
 
-const reachTarget = function() { //3.
+const reachTarget = function() { 
     if (budgetDay <= 0) {
         return 'Цель не будет достигнута';
     } else {
@@ -67,7 +68,7 @@ const reachTarget = function() { //3.
 
 console.log('Расходы за месяц: ', expensesAmount); 
 console.log('Возможные расходы: ', addExpenses.toLowerCase().split(', '));
-console.log(reachTarget());  //3.
+console.log(reachTarget());  
 console.log('Бюджет на день: ', budgetDay); 
 
 const getStatusIncome = function() {
