@@ -36,9 +36,9 @@ const btnStart = document.getElementById('start'), //a
     incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
     targetMonthValue = document.getElementsByClassName('target_month-value')[0],
     salaryAmount = document.querySelector('.salary-amount'),//f
-    incomeTitle = document.querySelector('.income-title'),
+    incomeTitle = document.querySelector('input.income-title'),
     incomeAmount = document.querySelector('.income-amount'),
-    expensesTitle = document.querySelector('.expenses-title'),
+    expensesTitle = document.querySelector('input.expenses-title'),
     expensesAmount = document.querySelector('.expenses-amount'),
     targetAmount = document.querySelector('.target-amount'),
     periodSelect = document.querySelector('.period-select');
@@ -138,7 +138,6 @@ console.log('Расходы за месяц: ', appData.expensesMonth);
 console.log(appData.getTargetMonth()); // Цель будет достигнута ...
 console.log(appData.getStatusIncome()); // Уровень дохода
 
-//2. addExpenses с большой буквы через запятую
 appData.addExpenses = appData.addExpenses.map(function(item){
     return item[0].toUpperCase() + item.slice(1);
 });
