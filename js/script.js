@@ -22,6 +22,27 @@ const promptStr = function(question, value) {
     return answer;
 };
 
+// 2.
+const btnStart = document.getElementById('start'), //a
+    btnPlus1 = document.getElementsByTagName('button')[0],//b
+    btnPlus2 = document.getElementsByTagName('button')[1],
+    depositСheck = document.querySelector('#deposit-check'),//c
+    additionalIncomeItem = document.querySelectorAll('.additional_income-item'),//d
+    budgetNonthValue = document.getElementsByClassName('budget_month-value')[0],//e
+    budgetDayValue = document.getElementsByClassName('budget_day-value')[0],
+    expensesMonthValue = document.getElementsByClassName('expenses_month-value')[0],
+    additionalIncomeValue = document.getElementsByClassName('additional_income-value')[0],
+    additionalExpensesValue = document.getElementsByClassName('additional_expenses-value')[0],
+    incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
+    targetMonthValue = document.getElementsByClassName('target_month-value')[0],
+    salaryAmount = document.querySelector('.salary-amount'),//f
+    incomeTitle = document.querySelector('.income-title'),
+    incomeAmount = document.querySelector('.income-amount'),
+    expensesTitle = document.querySelector('.expenses-title'),
+    expensesAmount = document.querySelector('.expenses-amount'),
+    targetAmount = document.querySelector('.target-amount'),
+    periodSelect = document.querySelector('.period-select');
+    
 let money;
 
 const start = function() {
@@ -29,7 +50,6 @@ const start = function() {
 };
 
 start(); 
-//можно сразу  присвоить money = promptNum и запустить без функции start, но убирать не сталаб т.к. в задании этого нет
 
 const appData = {
     budget: money,
@@ -118,16 +138,8 @@ console.log('Расходы за месяц: ', appData.expensesMonth);
 console.log(appData.getTargetMonth()); // Цель будет достигнута ...
 console.log(appData.getStatusIncome()); // Уровень дохода
 
-//2.
+//2. addExpenses с большой буквы через запятую
 appData.addExpenses = appData.addExpenses.map(function(item){
     return item[0].toUpperCase() + item.slice(1);
 });
 console.log(appData.addExpenses.join(', '));
-
-// console.log('Наша программа включает в себя данные:');
-// for (let key in appData) {
-//     console.log(key + ':');
-//     console.log(appData[key]);
-// }
-
-console.log(appData);
