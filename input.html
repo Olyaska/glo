@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text">
+    <input type="text">
+    <input type="text">
+
+    <script>
+        let input = document.querySelectorAll('input');
+        console.log(input);
+
+        input.forEach(item => {
+    item.addEventListener('input',()=> {
+        console.log('inp');
+        item.value = item.value.replace(/[^а-яА-Я\s\W]/,'');
+    });
+})
+    </script>
+</body>
+</html>
