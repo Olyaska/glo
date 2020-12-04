@@ -8,7 +8,6 @@ const isString = function(str) {
     return isNaN(str) && str !== '';
 };
 
-// 2.
 const btnStart = document.getElementById('start'), //Рассчитать
     btnPlusIncome = document.getElementsByTagName('button')[0],//+
     btnPlusExpenses = document.getElementsByTagName('button')[1],
@@ -29,10 +28,8 @@ const btnStart = document.getElementById('start'), //Рассчитать
     
     let incomeItems = document.querySelectorAll('.income-items'),
     expensesItems = document.querySelectorAll('.expenses-items'),
-    expensesTitle = document.querySelectorAll('input.expenses-title'),
-    expensesAmount = document.querySelectorAll('.expenses-amount'),
-    incomeTitle = document.querySelectorAll('input.income-title'),
-    incomeAmount = document.querySelectorAll('.income-amount');
+    inputsNum = document.querySelectorAll('[placeholder="Сумма"]'),
+    inputsTxt = document.querySelectorAll('[placeholder="Наименование"]');
 
 const appData = {
     budget: 0,
@@ -57,7 +54,6 @@ const appData = {
         appData.getAddExpenses();
         appData.getAddIncome();
         appData.showResult();
-        console.log(appData);
     },
     showResult: function() {
         budgetMonthValue.value = appData.budgetMonth;
@@ -75,14 +71,14 @@ const appData = {
         }
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, btnPlusExpenses);
 
-        expensesTitle = document.querySelectorAll('input.expenses-title');
         expensesItems = document.querySelectorAll('.expenses-items');
-        expensesAmount = document.querySelectorAll('.expenses-amount');
+        inputsNum = document.querySelectorAll('[placeholder="Сумма"]');
+        inputsTxt = document.querySelectorAll('[placeholder="Наименование"]');
         if (expensesItems.length === 3) {
             btnPlusExpenses.style.display = 'none';
         }
     },
-    addIncomeBlock: function() { //2
+    addIncomeBlock: function() { 
         const cloneIncomeItem = incomeItems[0].cloneNode(true);
         for (let item of cloneIncomeItem.children) { //1compl
             item.value = '';
@@ -90,9 +86,8 @@ const appData = {
         incomeItems[0].parentNode.insertBefore(cloneIncomeItem, btnPlusIncome);
 
         incomeItems = document.querySelectorAll('.income-items');
-        incomeTitle = document.querySelectorAll('input.income-title');
-        incomeAmount = document.querySelectorAll('.income-amount');
-        console.log(incomeTitle);
+        inputsNum = document.querySelectorAll('[placeholder="Сумма"]');
+        inputsTxt = document.querySelectorAll('[placeholder="Наименование"]');
         if (incomeItems.length === 3) {
             btnPlusIncome.style.display = 'none';
         }
@@ -107,7 +102,7 @@ const appData = {
             }
         });
     },
-    getIncome: function() { //1
+    getIncome: function() { 
         incomeItems.forEach(function(item) {
             let itemIncome = item.querySelector('.income-title').value.trim(),
             cashIncome = +item.querySelector('.income-amount').value.trim();
@@ -143,7 +138,7 @@ const appData = {
 
     getBudget: function() { 
         appData.budgetMonth = appData.budget - appData.expensesMonth;
-        appData.budgetDay = Math.floor(appData.budgetMonth / 30); //3
+        appData.budgetDay = Math.floor(appData.budgetMonth / 30); 
     },
 
     getTargetMonth: function() { 
@@ -175,7 +170,7 @@ const appData = {
     }
 };
 
-btnStart.disabled = true; // 6
+btnStart.disabled = true; 
 salaryAmount.addEventListener('change', function() {
     btnStart.disabled = false;
 });
@@ -184,30 +179,20 @@ btnStart.addEventListener('click', appData.start);
 btnPlusExpenses.addEventListener('click', appData.addExpensesBlock);
 btnPlusIncome.addEventListener('click', appData.addIncomeBlock);
 
-periodSelect.addEventListener('input', function() { //4
+periodSelect.addEventListener('input', function() { 
     periodAmount.textContent = periodSelect.value;
 });
-periodSelect.addEventListener('input', appData.showResult); //5
+periodSelect.addEventListener('input', appData.showResult); 
 
 
-
+// ------------  2, 3  ------------------
 const dataDiv = document.querySelector('.data');
 
-dataDiv.addEventListener('input', () => {
-    incomeTitle.forEach(item => {       
-            item.value = item.value.replace(/[^а-яА-Я\s\W]/,'');
-    });
-    incomeAmount.forEach(item => {
+dataDiv.addEventListener('input', () => { 
+    inputsNum.forEach(item => {
         item.value = item.value.replace(/[^\d]/g, '');
     });
-    additionalIncomeItem.forEach(item => {       
+    inputsTxt.forEach(item => {       
         item.value = item.value.replace(/[^а-яА-Я\s\W]/,'');
     });
-    expensesTitle.forEach(item => {       
-            item.value = item.value.replace(/[^а-яА-Я\s\W]/,'');
-    });
-    expensesAmount.forEach(item => {
-        item.value = item.value.replace(/[^\d]/g, '');
-    });
-    targetAmount.value = targetAmount.value.replace(/[^\d]/g, '');
 });
