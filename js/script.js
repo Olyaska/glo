@@ -8,8 +8,8 @@ const isString = function(str) {
     return isNaN(str) && str !== '';
 };
 
-// 2.
 const btnStart = document.getElementById('start'), //Рассчитать
+    btnCancel = document.getElementById('cancel'),
     btnPlusIncome = document.getElementsByTagName('button')[0],//+
     btnPlusExpenses = document.getElementsByTagName('button')[1],
     depositСheck = document.querySelector('#deposit-check'),//checkbox Депозит
@@ -46,21 +46,21 @@ const appData = {
     expensesMonth: 0,
 
     start: function() {
-        appData.budget = salaryAmount.value;
-        appData.getIncome();
-        appData.getExpenses();
+        this.budget = +salaryAmount.value;
+        this.getIncome();
+        this.getExpenses();
 
-        appData.getExpensesMonth(); // expensesMonth
-        appData.getBudget(); // budgetMonth, budgetDay
-        appData.getAddExpenses();
-        appData.getAddIncome();
-        appData.showResult();
-        console.log(appData);
+        this.getExpensesMonth(); 
+        this.getBudget(); // budgetMonth, budgetDay
+        this.getAddExpenses();
+        this.getAddIncome();
+        this.showResult();
+        periodSelect.addEventListener('input', this.checkPeriod);
     },
     showResult: function() {
-        budgetMonthValue.value = appData.budgetMonth;
-        budgetDayValue.value = appData.budgetDay;
-        expensesMonthValue.value = appData.expensesMonth;
+        budgetMonthValue.value = this.budgetMonth;
+        budgetDayValue.value = this.budgetDay;
+        expensesMonthValue.value = this.expensesMonth;
         additionalExpensesValue.value = appData.addExpenses.join(', ');
         additionalIncomeValue.value = appData.addIncome.join(', ');
         targetMonthValue.value = appData.getTargetMonth();
@@ -94,7 +94,7 @@ const appData = {
             }
         });
     },
-    getIncome: function() { //1
+    getIncome: function() { 
         incomeItems.forEach(function(item) {
             let itemIncome = item.querySelector('.income-title').value.trim(),
             cashIncome = +item.querySelector('.income-amount').value.trim();
@@ -157,21 +157,75 @@ const appData = {
         }
     },
 
-    calcSavedMoney: function () {
+    calcSavedMoney: function() {
         return appData.budgetMonth * periodSelect.value;
+    },
+
+    checkPeriod: function() { 
+        appData.showResult.call(appData);
+    }, 
+
+    reset: function() {
+        const inputs = document.querySelectorAll('.calc input[type=text]');
+        for (let input of inputs) {
+            input.value = '';
+            input.disabled = false;
+        }
+
+        if (incomeItems.length > 1) {
+            for (let i = 1; i < incomeItems.length; i++) {
+                incomeItems[i].remove();
+            }
+            btnPlusIncome.style.display = 'block';
+        }
+        if (expensesItems.length > 1) {
+            for (let i = 1; i < expensesItems.length; i++) {
+                expensesItems[i].remove();
+            }
+            btnPlusExpenses.style.display = 'block';
+        }
+
+        depositСheck.checked = false;
+        periodSelect.value = 1;
+
+        periodSelect.removeEventListener('input', appData.checkPeriod);
     }
 };
 
-btnStart.disabled = true; // 6
+
+const blockInputs = function() {
+    const inputs = document.querySelectorAll('.data input[type=text]');
+    for (let input of inputs) {
+        input.disabled = true;
+    }
+};
+const hideBtnStart = function() {
+    btnStart.style.display = 'none';
+    btnCancel.style.display = 'block';
+};
+const hideBtnCancel = function() {
+    btnStart.style.display = 'block';
+    btnCancel.style.display = 'none';
+};
+
+btnStart.disabled = true; 
 salaryAmount.addEventListener('change', function() {
     btnStart.disabled = false;
 });
-console.dir(btnStart);
-btnStart.addEventListener('click', appData.start);
+
 btnPlusExpenses.addEventListener('click', appData.addExpensesBlock);
 btnPlusIncome.addEventListener('click', appData.addIncomeBlock);
 
-periodSelect.addEventListener('input', function() { //4
+btnStart.addEventListener('click', function(){ 
+    appData.start.call(appData);
+}); 
+btnStart.addEventListener('click', blockInputs);
+btnStart.addEventListener('click', hideBtnStart);
+
+
+periodSelect.addEventListener('input', function() { 
     periodAmount.textContent = periodSelect.value;
 });
-periodSelect.addEventListener('input', appData.showResult); //5
+
+btnCancel.addEventListener('click', appData.reset);
+btnCancel.addEventListener('click', hideBtnCancel);
