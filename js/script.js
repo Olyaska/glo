@@ -30,10 +30,13 @@ const btnStart = document.getElementById('start'), //Рассчитать
     depositCheck = document.querySelector('#deposit-check'),
     depositBank = document.querySelector('.deposit-bank'),
     depositAmount = document.querySelector('.deposit-amount'),
-    depositPercent = document.querySelector('.deposit-percent');
-
+    depositPercent = document.querySelector('.deposit-percent'),
+    resultInputs = document.querySelectorAll('.result input');
+console.log(resultInputs);
 let incomeItems = document.querySelectorAll('.income-items'),
     expensesItems = document.querySelectorAll('.expenses-items');
+
+
 
 class AppData {
     constructor() {
@@ -58,9 +61,11 @@ class AppData {
             btnStart.disabled = true;
             return;
         }
-        if (!isNumber(depositPercent.value) || depositPercent.value < 0 || depositPercent.value > 100) {
-            alert('Введите корректное значение в поле проценты'); //4
-            return
+        if (depositСheck.checked) { 
+            if (!isNumber(depositPercent.value) || depositPercent.value < 0 || depositPercent.value > 100) {
+                alert('Введите корректное значение в поле проценты'); 
+                return;
+            }
         }
         this.budget = +salaryAmount.value;
         this.getIncome();
@@ -71,6 +76,7 @@ class AppData {
         this.getAddExpenses();
         this.getAddIncome();
         this.showResult();
+        this.saveToLS();
 
         periodSelect.addEventListener('input', this.checkPeriod.bind(this));
 
@@ -90,6 +96,14 @@ class AppData {
         additionalIncomeValue.value = this.addIncome.join(', ');
         targetMonthValue.value = this.getTargetMonth();
         incomePeriodValue.value = this.calcSavedMoney();
+    }
+    saveToLS() {
+        const inputArr = [];
+        for (let input of resultInputs) {
+            inputArr.push(input.value);
+        };
+        console.log(inputArr);
+        localStorage.budget = inputArr;
     }
     addExpensesBlock() {
         const cloneExpensesItem = expensesItems[0].cloneNode(true);
@@ -152,7 +166,8 @@ class AppData {
         }
     }
     getBudget() { 
-        const monthDeposit = (this.moneyDeposit * (this.percentDeposit / 100)) / 12;
+        const monthDeposit = depositСheck.checked ? (this.moneyDeposit * (this.percentDeposit / 100)) / 12 : 0; 
+        // Добавила проверку на depositСheck, потому что без нее при неотмеченном депозите получался NaN
         this.budgetMonth = this.budget - this.expensesMonth + monthDeposit;
         this.budgetDay = Math.floor(this.budgetMonth / 30); 
     }
@@ -218,7 +233,10 @@ class AppData {
         this.deposit = false;
         this.mission = 0;
         this.expensesMonth = 0;  
+
+        localStorage.removeItem('budget');
     }
+
 
     getInfoDeposit() {
         if(this.deposit) {
