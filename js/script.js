@@ -59,7 +59,7 @@ class AppData {
             return;
         }
         if (depositСheck.checked) { 
-            if (!isNumber(depositPercent.value) || depositPercent.value < 0 || depositPercent.value > 100) {
+            if (depositPercent.value > 100) {
                 alert('Введите корректное значение в поле проценты'); 
                 return;
             }
@@ -229,14 +229,24 @@ class AppData {
             this.moneyDeposit = depositAmount.value;
         }
     }
+    
     changePercent() {
         const valueSelect = this.value;
         if (valueSelect === 'other') { //2
             depositPercent.style.display = 'inline-block';
+            depositPercent.value = '';
+            depositPercent.addEventListener('input', () => {
+                depositPercent.value = depositPercent.value.replace(/[^\d]/g, ''); 
+                // не очень пока с регуляркой, поэтому не получилось ограничение до 100 сделать.. 
+                // Поидее куда-то надо {2} приткнуть, но не сработало
+            });
         } else {
             depositPercent.value = valueSelect;
+            depositPercent.style.display = 'none';
+            depositPercent.removeEventListener('input', this.checkPercent);
         }
     }
+
     depositHandler() {
         if(depositСheck.checked) {
             depositBank.style.display = 'inline-block';
