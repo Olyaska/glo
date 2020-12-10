@@ -235,10 +235,11 @@ class AppData {
         if (valueSelect === 'other') { //2
             depositPercent.style.display = 'inline-block';
             depositPercent.value = '';
-            depositPercent.addEventListener('input', () => {
+            depositPercent.addEventListener('input', () => {               
                 depositPercent.value = depositPercent.value.replace(/[^\d]/g, ''); 
-                // не очень пока с регуляркой, поэтому не получилось ограничение до 100 сделать.. 
-                // Поидее куда-то надо {2} приткнуть, но не сработало
+                if (depositPercent.value > 100) {
+                    depositPercent.value = 100;
+                }
             });
         } else {
             depositPercent.value = valueSelect;
