@@ -1,12 +1,4 @@
 'use strict';
-
-const isNumber = function(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-};
-const isString = function(str) {
-    str.trim();
-    return isNaN(str) && str !== '';
-};
 const btnStart = document.getElementById('start'), //Рассчитать
     btnCancel = document.getElementById('cancel'),
     btnPlusIncome = document.getElementsByTagName('button')[0],//+
@@ -32,11 +24,64 @@ const btnStart = document.getElementById('start'), //Рассчитать
     depositAmount = document.querySelector('.deposit-amount'),
     depositPercent = document.querySelector('.deposit-percent'),
     resultInputs = document.querySelectorAll('.result input');
-console.log(resultInputs);
-let incomeItems = document.querySelectorAll('.income-items'),
-    expensesItems = document.querySelectorAll('.expenses-items');
+    
+let leftInputs = document.querySelectorAll('.data input[type=text]'),
+    incomeItems = document.querySelectorAll('.income-items'),
+    expensesItems = document.querySelectorAll('.expenses-items'),
+    resultStorage = {};
 
+const isNumber = function(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+};
+const isString = function(str) {
+    str.trim();
+    return isNaN(str) && str !== '';
+};
+const setCookie = (key, value) => {
+    let cookieStr = key + '=' + value;
+    let date = Date.now() + 1000*60*60*24*7;
+    date = new Date(date);
+    cookieStr += '; expires = ' + date.toGMTString();
+    document.cookie = cookieStr;
+};
+const unsetCookie = (key) => {
+    let cookieStr = key + '= ""';
+    let date = Date.now() - 1000000;
+    date = new Date(date);
+    cookieStr += '; expires = ' + date.toGMTString();
+    document.cookie = cookieStr;
+};
+const checkCookie = (resultObj) => {
+    for (const key in resultObj) {
+        if(!document.cookie.includes(key)) {return false;}
+    }
+    if(!document.cookie.includes('isLoad')) {return false;}
+    return true;
+};
 
+const init = function() {
+    if (localStorage.budget) {
+        resultStorage = JSON.parse(localStorage.budget);
+        if (checkCookie(resultStorage)) { //все куки на месте?
+            // да: нарисуй из локалСт
+            resultInputs.forEach(item => {
+                item.value = resultStorage[item.classList[1]];
+            });
+            for (let input of leftInputs) {
+                input.disabled = true;
+            }
+            btnStart.style.display = 'none';
+            btnCancel.style.display = 'block';
+        } else { //нет: грохнуть весь сторедж
+            for (const key in resultStorage) {
+                unsetCookie(key);
+            }
+            unsetCookie('isLoad');
+            localStorage.removeItem('budget');
+        }
+        
+    } 
+};
 
 class AppData {
     constructor() {
@@ -62,7 +107,7 @@ class AppData {
             return;
         }
         if (depositСheck.checked) { 
-            if (!isNumber(depositPercent.value) || depositPercent.value < 0 || depositPercent.value > 100) {
+            if (depositPercent.value > 100) {
                 alert('Введите корректное значение в поле проценты'); 
                 return;
             }
@@ -76,12 +121,12 @@ class AppData {
         this.getAddExpenses();
         this.getAddIncome();
         this.showResult();
-        this.saveToLS();
+        this.saveToStorage();
 
         periodSelect.addEventListener('input', this.checkPeriod.bind(this));
 
-        const inputs = document.querySelectorAll('.data input[type=text]');
-        for (let input of inputs) {
+        leftInputs = document.querySelectorAll('.data input[type=text]');
+        for (let input of leftInputs) {
             input.disabled = true;
         }
 
@@ -97,13 +142,18 @@ class AppData {
         targetMonthValue.value = this.getTargetMonth();
         incomePeriodValue.value = this.calcSavedMoney();
     }
-    saveToLS() {
-        const inputArr = [];
+    saveToStorage() {
+        const inputObj = {};
         for (let input of resultInputs) {
-            inputArr.push(input.value);
-        };
-        console.log(inputArr);
-        localStorage.budget = inputArr;
+            inputObj[input.classList[1]] = input.value;
+        }
+        localStorage.budget = JSON.stringify(inputObj);
+
+        setCookie('isLoad', 'true');
+        for (const key in inputObj) {
+            setCookie(key, inputObj[key]);
+        }
+        
     }
     addExpensesBlock() {
         const cloneExpensesItem = expensesItems[0].cloneNode(true);
@@ -167,8 +217,7 @@ class AppData {
     }
     getBudget() { 
         const monthDeposit = depositСheck.checked ? (this.moneyDeposit * (this.percentDeposit / 100)) / 12 : 0; 
-        // Добавила проверку на depositСheck, потому что без нее при неотмеченном депозите получался NaN
-        this.budgetMonth = this.budget - this.expensesMonth + monthDeposit;
+        this.budgetMonth = Math.floor(this.budget - this.expensesMonth + monthDeposit);
         this.budgetDay = Math.floor(this.budgetMonth / 30); 
     }
     getTargetMonth() { 
@@ -186,7 +235,6 @@ class AppData {
             return 'Что-то пошло не так: Ваши расходы превышают Ваши доходы';
         }
     }
-
     calcSavedMoney() {
         return this.budgetMonth * periodSelect.value;
     }
@@ -234,7 +282,12 @@ class AppData {
         this.mission = 0;
         this.expensesMonth = 0;  
 
+        for (const key in resultStorage) {
+            unsetCookie(key);
+        }
+        unsetCookie('isLoad');
         localStorage.removeItem('budget');
+
     }
 
 
@@ -244,14 +297,25 @@ class AppData {
             this.moneyDeposit = depositAmount.value;
         }
     }
+    
     changePercent() {
         const valueSelect = this.value;
-        if (valueSelect === 'other') { //2
+        if (valueSelect === 'other') { 
             depositPercent.style.display = 'inline-block';
+            depositPercent.value = '';
+            depositPercent.addEventListener('input', () => {               
+                depositPercent.value = depositPercent.value.replace(/[^\d]/g, ''); 
+                if (depositPercent.value > 100) {
+                    depositPercent.value = 100;
+                }
+            });
         } else {
             depositPercent.value = valueSelect;
+            depositPercent.style.display = 'none';
+            depositPercent.removeEventListener('input', this.checkPercent);
         }
     }
+
     depositHandler() {
         if(depositСheck.checked) {
             depositBank.style.display = 'inline-block';
@@ -284,3 +348,5 @@ class AppData {
 }
 const appData = new AppData();
 appData.eventListeners();
+
+init();
